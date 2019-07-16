@@ -11,3 +11,5 @@ gradle-app.setting
 .gradletasknamecache
 
 start.sh
+/.idea/
+/.vscode/
