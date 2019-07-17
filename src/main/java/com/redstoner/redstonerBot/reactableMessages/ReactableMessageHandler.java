@@ -35,17 +35,22 @@ public abstract class ReactableMessageHandler {
 
 	abstract Map<String, String> getConfigNames();
 
-	public abstract void send(Consumer<? super Message> onSent);
+	public abstract Message getMessage();
 
 	public abstract ReactionHandler getReactionHandler();
 
 	public abstract Set<String> getReactions();
+
+	private void send(Consumer<? super Message> onSent) {
+		channel.sendMessage(getMessage()).queue(onSent);
+	}
 
 	public void checkMessage() {
 		logger.info("[Check] Checking message ID: " + msgId);
 
 		try {
 			checkAfterMessageFound(channel.getMessageById(msgId).complete());
+			channel.editMessageById(msgId, getMessage()).queue();
 		} catch (Exception e) {
 			logger.info("[Check] Message with ID " + msgId + " does not exist, sending new one!");
 			send(this::checkAfterMessageFound);

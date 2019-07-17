@@ -1,6 +1,7 @@
 package com.redstoner.redstonerBot.managers;
 
 import com.redstoner.redstonerBot.Manager;
+import com.redstoner.redstonerBot.commands.CheckMessagesCommand;
 import com.redstoner.redstonerBot.commands.Command;
 import com.redstoner.redstonerBot.commands.InfoCommand;
 import com.redstoner.redstonerBot.commands.StopCommand;
@@ -23,7 +24,7 @@ public class CommandManager implements Manager {
 
 		commands.put("info", new InfoCommand());
 		commands.put("stop", new StopCommand());
-
+		commands.put("checkmessages", new CheckMessagesCommand());
 
 		logger.info("Command Manager started!");
 		return true;

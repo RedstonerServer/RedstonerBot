@@ -16,7 +16,7 @@ import java.util.List;
 public class InfoManager implements Manager {
 	private static final Logger logger = LoggerFactory.getLogger(InfoManager.class);
 
-	private List<ReactableMessageHandler> messageHandlers = new ArrayList<>();
+	private static List<ReactableMessageHandler> messageHandlers = new ArrayList<>();
 
 	@Override
 	public boolean start() {
@@ -29,11 +29,7 @@ public class InfoManager implements Manager {
 		messageHandlers.add(new InfoReactableMessageHandler(jda, guild, channel));
 		messageHandlers.add(new OptInReactableMessageHandler(jda, guild, channel));
 
-		new Thread(() -> {
-			for (ReactableMessageHandler handler : messageHandlers) {
-				handler.checkMessage();
-			}
-		}).start();
+		checkMessages();
 
 		logger.info("Info Manager started!");
 		return true;
@@ -52,4 +48,14 @@ public class InfoManager implements Manager {
 		logger.info("Info Manager stopped!");
 		return true;
 	}
+
+	public static void checkMessages() {
+		new Thread(() -> {
+			for (ReactableMessageHandler handler : messageHandlers) {
+				handler.checkMessage();
+			}
+		}).start();
+	}
+
+
 }

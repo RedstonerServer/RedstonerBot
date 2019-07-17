@@ -9,7 +9,6 @@ import net.dv8tion.jda.core.entities.*;
 import net.dv8tion.jda.core.managers.GuildController;
 
 import java.util.*;
-import java.util.function.Consumer;
 
 public class OptInReactableMessageHandler extends ReactableMessageHandler {
 	static Map<String, String> configNames = new HashMap<>();
@@ -34,7 +33,7 @@ public class OptInReactableMessageHandler extends ReactableMessageHandler {
 	}
 
 	@Override
-	public void send(Consumer<? super Message> onSent) {
+	public Message getMessage() {
 		String prefix = DataManager.getConfigValue(configNames.get("prefix"));
 		String suffix = DataManager.getConfigValue(configNames.get("suffix"));
 
@@ -106,7 +105,7 @@ public class OptInReactableMessageHandler extends ReactableMessageHandler {
 
 		msg.append(suffix);
 
-		channel.sendMessage(msg.build()).queue(onSent);
+		return msg.build();
 	}
 
 	@Override
