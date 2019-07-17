@@ -1,8 +1,6 @@
 package com.redstoner.redstonerBot;
 
-import com.redstoner.redstonerBot.managers.CommandManager;
-import com.redstoner.redstonerBot.managers.DataManager;
-import com.redstoner.redstonerBot.managers.DiscordManager;
+import com.redstoner.redstonerBot.managers.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,8 +16,10 @@ public class Main {
 
 	static {
 		managers.add(new DataManager());
+		managers.add(new ReactionManager());
 		managers.add(new DiscordManager());
 		managers.add(new CommandManager());
+		managers.add(new InfoManager());
 	}
 
 	public static void main(final String... args) {

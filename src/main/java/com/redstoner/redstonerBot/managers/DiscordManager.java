@@ -2,22 +2,27 @@ package com.redstoner.redstonerBot.managers;
 
 import com.redstoner.redstonerBot.Env;
 import com.redstoner.redstonerBot.Manager;
+import com.redstoner.redstonerBot.listeners.MessageReaction;
 import com.redstoner.redstonerBot.listeners.MessageReceived;
+import com.vdurmont.emoji.Emoji;
+import com.vdurmont.emoji.EmojiManager;
 import net.dv8tion.jda.core.AccountType;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.JDABuilder;
+import net.dv8tion.jda.core.entities.Emote;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.security.auth.login.LoginException;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class DiscordManager implements Manager {
 	private static final Logger logger = LoggerFactory.getLogger(DiscordManager.class);
 
-	private JDA jda;
+	private static JDA jda;
 
 	public boolean start() {
 		logger.info("Discord Manager starting...");
@@ -31,6 +36,7 @@ public class DiscordManager implements Manager {
 			builder.setToken(Env.TOKEN);
 
 			builder.addEventListener(new MessageReceived());
+			builder.addEventListener(new MessageReaction());
 
 			jda = builder.build().awaitReady();
 		} catch (LoginException e) {
@@ -65,5 +71,19 @@ public class DiscordManager implements Manager {
 
 	public static void expireMessage(Message message) {
 		message.delete().reason("Redstoner Bot message expiry").queueAfter(5, TimeUnit.SECONDS);
+	}
+
+	public static JDA getJda() {
+		return jda;
+	}
+
+	public static Object getEmoteByName(String name) {
+		Emoji e = EmojiManager.getForAlias(name);
+		if (e != null) return e.getUnicode();
+
+		List<Emote> emotes = jda.getEmotesByName(name, true);
+		if (emotes.size() > 0) return emotes.get(0);
+
+		return null;
 	}
 }
