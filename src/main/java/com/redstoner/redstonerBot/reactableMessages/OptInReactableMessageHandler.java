@@ -44,7 +44,7 @@ public class OptInReactableMessageHandler extends ReactableMessageHandler {
 
 		List<Map<String, String>> optIns = DataManager.getOptins();
 
-		if (optIns != null) {
+		if (optIns != null && channelFormat != null && roleFormat != null) {
 			List<Map<String, String>> channelOptIns = new ArrayList<>();
 			List<Map<String, String>> roleOptIns    = new ArrayList<>();
 
@@ -114,11 +114,12 @@ public class OptInReactableMessageHandler extends ReactableMessageHandler {
 			String emoteName = reaction.getReactionEmote().getName();
 			String authorTag = author.getAsTag();
 
-			if (added) {
-				logger.info("Opt in reaction " + emoteName + " by user " + authorTag + " added!");
-			} else {
-				logger.info("Opt in reaction " + emoteName + " by user " + authorTag + " removed!");
-			}
+			// TOS :omegalul:
+			// if (added) {
+			// 	 logger.info("Opt in reaction " + emoteName + " by user " + authorTag + " added!");
+			// } else {
+			// 	 logger.info("Opt in reaction " + emoteName + " by user " + authorTag + " removed!");
+			// }
 
 			List<Map<String, String>> optIns = DataManager.getOptins();
 			if (optIns == null) return;
@@ -157,14 +158,17 @@ public class OptInReactableMessageHandler extends ReactableMessageHandler {
 				Role            optInRole       = guild.getRoleById(roleId);
 
 				if (added) {
-					logger.info("Adding role " + optInRole.getName() + " to user " + authorTag);
+					// TOS :omegalul:
+					// logger.info("Adding role " + optInRole.getName() + " to user " + authorTag);
 					guildController.addSingleRoleToMember(authorMember, optInRole).queue();
 				} else {
-					logger.info("Removing role " + optInRole.getName() + " from user " + authorTag);
+					// TOS :omegalul:
+					// logger.info("Removing role " + optInRole.getName() + " from user " + authorTag);
 					guildController.removeSingleRoleFromMember(authorMember, optInRole).queue();
 				}
 			} else if (added) {
-				logger.info("Removing rogue reaction " + emoteName + " by user " + authorTag);
+				// TOS :omegalul:
+				// logger.info("Removing rogue reaction " + emoteName + " by user " + authorTag);
 				reaction.removeReaction(author).queue();
 			}
 		};

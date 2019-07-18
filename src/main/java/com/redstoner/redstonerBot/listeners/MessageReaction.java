@@ -37,7 +37,8 @@ public class MessageReaction extends ListenerAdapter {
 		if (!self.hasPermission(channel, Permission.MESSAGE_WRITE)) return;
 		if (!self.hasPermission(channel, Permission.MESSAGE_EMBED_LINKS)) return;
 
-		logger.info("[" + messageId + "] " + author.getAsTag() + " -> + " + reaction.getReactionEmote().getName());
+		// TOS :omegalul:
+		// logger.info("[" + messageId + "] " + author.getAsTag() + " -> + " + reaction.getReactionEmote().getName());
 
 		ReactionManager.handle(messageId, reaction, author, true);
 	}
@@ -60,7 +61,8 @@ public class MessageReaction extends ListenerAdapter {
 		if (!self.hasPermission(channel, Permission.MESSAGE_WRITE)) return;
 		if (!self.hasPermission(channel, Permission.MESSAGE_EMBED_LINKS)) return;
 
-		logger.info("[" + messageId + "] " + author.getAsTag() + " -> - " + reaction.getReactionEmote().getName());
+		// TOS :omegalul:
+		// logger.info("[" + messageId + "] " + author.getAsTag() + " -> - " + reaction.getReactionEmote().getName());
 
 		ReactionManager.handle(messageId, reaction, author, false);
 	}

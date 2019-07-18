@@ -34,9 +34,12 @@ public class MessageReceived extends ListenerAdapter {
 
 		String rawMessage = message.getContentRaw();
 
-		logger.info(author.getAsTag() + " -> " + rawMessage);
+		// TOS :omegalul:
+		// logger.info(author.getAsTag() + " -> " + rawMessage);
 
-		if (rawMessage.startsWith(DataManager.getConfigValue("prefix_char"))) {
+		String prefixChar = DataManager.getConfigValue("prefix_char");
+
+		if (prefixChar != null && rawMessage.startsWith(prefixChar)) {
 			CommandManager.execute(guild, channel, message, author, self);
 		}
 	}
