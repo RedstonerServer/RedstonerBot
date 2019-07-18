@@ -37,18 +37,31 @@ public class InfoReactableMessageHandler extends ReactableMessageHandler {
 
 		String format = DataManager.getConfigValue(configNames.get("format"));
 
+		String rulesLang = DataManager.getConfigValue("rules_lang");
+
 		MessageBuilder msg = new MessageBuilder(prefix + "\n");
 
-		List<String> rules = DataManager.getRules();
+		Map<Integer, String> ruleSections = DataManager.getRuleSections();
 
-		if (rules != null) {
-			for (int i = 0; i < rules.size(); i++) {
-				msg.append(i + 1);
-				msg.append(". ");
-				msg.append(rules.get(i));
+		for (Integer sectionId : ruleSections.keySet()) {
+			List<String> rules = DataManager.getRules(sectionId);
+
+			if (rules != null) {
+				msg.append("**");
+				msg.append(ruleSections.get(sectionId));
+				msg.append("**\n```");
+				msg.append(rulesLang);
 				msg.append("\n");
+
+				for (int i = 0; i < rules.size(); i++) {
+					msg.append(i + 1);
+					msg.append(". ");
+					msg.append(rules.get(i));
+					msg.append("\n");
+				}
+
+				msg.append("```\n");
 			}
-			msg.append("\n");
 		}
 
 		Map<String, String> reactions = DataManager.getruleAgreeReactions();
