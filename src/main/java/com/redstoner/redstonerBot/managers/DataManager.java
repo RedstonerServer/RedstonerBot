@@ -14,33 +14,23 @@ import java.util.Map;
 public class DataManager implements Manager {
 	private static final Logger logger = LoggerFactory.getLogger(DataManager.class);
 
-	private static final String[] requiredTables = { "config", "opt_in", "rules", "rule_agree_reactions" };
-
-	private static Map<String, String> config = new HashMap<>();
+	private static final String[] requiredTables = { "config", "opt_in", "rules", "rule_sections", "rule_agree_reactions" };
 
 	public boolean start() {
 		logger.info("Data Manager starting...");
 
 		if (checkConnection()) {
-			logger.info("Loading config...");
-
-			if (!loadConfig()) {
-				logger.error("Data Manager failed to load config!");
-				return false;
-			}
-
 			logger.info("Data Manager started!");
 			return true;
-		} else {
-			logger.error("Data Manager failed to start!");
-			return false;
 		}
+
+		logger.error("Data Manager failed to start!");
+		return false;
+
 	}
 
 	public boolean stop() {
 		logger.info("Data Manager stopping...");
-
-		config.clear();
 
 		logger.info("Data Manager stopped!");
 		return true;
@@ -64,7 +54,7 @@ public class DataManager implements Manager {
 			Class.forName("com.mysql.cj.jdbc.Driver");
 
 			Connection conn = getConnection();
-			ResultSet  rs   = conn.prepareStatement("show tables").executeQuery();
+			ResultSet  rs   = conn.prepareStatement("SHOW TABLES").executeQuery();
 
 			List<String> tables = new ArrayList<>();
 
@@ -89,7 +79,23 @@ public class DataManager implements Manager {
 	}
 
 	public static String getConfigValue(String name) {
-		return config.get(name);
+		try {
+			Connection        conn = getConnection();
+			PreparedStatement ps   = conn.prepareStatement("SELECT * FROM config WHERE name=?");
+
+			ps.setString(1, name);
+
+			ResultSet rs = ps.executeQuery();
+			rs.next();
+
+			String value = rs.getString(2);
+
+			conn.close();
+			return value;
+		} catch (SQLException e) {
+			logger.error("SQL error:", e);
+			return null;
+		}
 	}
 
 	public static boolean setConfigValue(String name, String value) {
@@ -107,10 +113,7 @@ public class DataManager implements Manager {
 
 			boolean succ = ps.execute();
 
-			if (succ) {
-				config.put(name, value);
-			}
-
+			conn.close();
 			return succ;
 		} catch (SQLException e) {
 			logger.error("SQL error:", e);
@@ -118,31 +121,33 @@ public class DataManager implements Manager {
 		}
 	}
 
-	public static boolean loadConfig() {
+	public static Map<Integer, String> getRuleSections() {
 		try {
 			Connection conn = getConnection();
-			ResultSet  rs   = conn.prepareStatement("SELECT * FROM config").executeQuery();
+			ResultSet  rs   = conn.prepareStatement("SELECT * FROM rule_sections").executeQuery();
 
-			config.clear();
+			Map<Integer, String> sections = new HashMap<>();
 
 			while (rs.next()) {
-				String name  = rs.getString(1);
-				String value = rs.getString(2);
-
-				config.put(name, value);
+				sections.put(rs.getInt(1), rs.getString(2));
 			}
 
-			return true;
+			conn.close();
+			return sections;
 		} catch (SQLException e) {
 			logger.error("SQL error:", e);
-			return false;
+			return new HashMap<>();
 		}
 	}
 
-	public static List<String> getRules() {
+	public static List<String> getRules(int sectionId) {
 		try {
-			Connection conn = getConnection();
-			ResultSet  rs   = conn.prepareStatement("SELECT * FROM rules").executeQuery();
+			Connection        conn = getConnection();
+			PreparedStatement ps   = conn.prepareStatement("SELECT * FROM rules WHERE section_id=?");
+
+			ps.setInt(1, sectionId);
+
+			ResultSet rs = ps.executeQuery();
 
 			List<String> rules = new ArrayList<>();
 
@@ -150,6 +155,7 @@ public class DataManager implements Manager {
 				rules.add(rs.getString(2));
 			}
 
+			conn.close();
 			return rules;
 		} catch (SQLException e) {
 			logger.error("SQL error:", e);
@@ -168,6 +174,7 @@ public class DataManager implements Manager {
 				reactions.put(rs.getString(3), rs.getString(2));
 			}
 
+			conn.close();
 			return reactions;
 		} catch (SQLException e) {
 			logger.error("SQL error:", e);
@@ -192,6 +199,7 @@ public class DataManager implements Manager {
 				optins.add(optin);
 			}
 
+			conn.close();
 			return optins;
 		} catch (SQLException e) {
 			logger.error("SQL error:", e);
